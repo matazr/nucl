@@ -1,0 +1,54 @@
+name: Shodan and Nuclei Workflow
+
+on:
+  workflow_dispatch:  # Allows manual triggering
+  schedule:           # Optional: Schedule the workflow
+    - cron: '0 0 * * *'  # Runs daily at midnight
+
+jobs:
+  shodan_nuclei_scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the Repository
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    # Step 2: Set up Python for Shodan CLI
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.8'
+
+    - name: Install Shodan CLI
+      run: pip install shodan
+
+    # Step 3: Fetch Targets from Shodan
+    # - name: Query Shodan
+    #   env:
+    #     SHODAN_API_KEY: ${{ secrets.SHODAN_API_KEY }}
+    #   run: |
+    #     shodan init $SHODAN_API_KEY
+    #     shodan search --fields ip_str "Aviatrix Controller" > targets.txt
+
+    # Step 4: Install Nuclei
+    - name: Install Nuclei
+      run: |
+        curl -sSL https://github.com/projectdiscovery/nuclei/releases/latest/download/nuclei_$(uname -s)_$(uname -m).tar.gz | tar -xz
+        sudo mv nuclei /usr/local/bin/
+
+    # Step 5: Update Nuclei Templates
+    - name: Update Nuclei Templates
+      run: nuclei -update-templates
+
+    # Step 6: Run Nuclei with Targets
+    - name: Run Nuclei Scan
+      run: |
+        nuclei -l polywood.com -t CVE-2024-50603.yaml -o results.txt
+
+    # Step 7: Upload Results as Artifact
+    - name: Upload Scan Results
+      uses: actions/upload-artifact@v3
+      with:
+        name: scan-results
+        path: results.txt
