@@ -12,36 +12,22 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v3
 
-    # Step 2: Set up Go
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: 1.19
+     # Step 2: Pull the Nuclei Docker Image
+    - name: Pull Nuclei Docker Image
+      run: docker pull projectdiscovery/nuclei:latest
 
-    # Step 3: Install Go-based Shodan Client
-    - name: Install Shodan Go Client
-      run: go install github.com/ffuf/shodan-go/cmd/shodan@latest
-
-    # Step 4: Fetch Targets from Shodan
-    # - name: Query Shodan
-    #   env:
-    #     SHODAN_API_KEY: ${{ secrets.SHODAN_API_KEY }}
-    #   run: |
-    #     export SHODAN_API_KEY=$SHODAN_API_KEY
-    #     shodan search "Aviatrix Controller" -fields ip_str > targets.txt
-
-    # Step 5: Install Nuclei
-    - name: Install Nuclei
-      run: go install -v github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
-
-    # Step 6: Update Nuclei Templates
-    - name: Update Nuclei Templates
-      run: nuclei -update-templates
-
-    # Step 7: Run Nuclei with Targets
-    - name: Run Nuclei Scan
+    # Step 3: Run Nuclei Scan
+    - name: Run Nuclei with Docker
       run: |
-        nuclei -l polywood.com -t CVE-2024-50603.yaml -o results.txt
+        # Create a targets.txt file with your target(s)
+        echo "https://example.com" > targets.txt
+        mkdir results  # Ensure results directory exists
+        docker run --rm \
+          -v $(pwd):/nuclei \
+          projectdiscovery/nuclei:latest \
+          -l polywood.com \
+          -t CVE-2024-50603.yaml \
+          -o /nuclei/results/results.txt
 
     # Step 8: Upload Results as Artifact
     - name: Upload Scan Results
