@@ -34,4 +34,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: scan-results
-        path: results.txt
+        path: results/results.txt
