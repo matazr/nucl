@@ -20,12 +20,12 @@ jobs:
     - name: Run Nuclei with Docker
       run: |
         # Create a targets.txt file with your target(s)
-        echo "https://example.com" > targets.txt
+        echo "https://polywood.com" > targets.txt
         mkdir results  # Ensure results directory exists
         docker run --rm \
           -v $(pwd):/nuclei \
           projectdiscovery/nuclei:latest \
-          -l polywood.com \
+          -l targets.txt \
           -t CVE-2024-50603.yaml \
           -o /nuclei/results/results.txt
 
