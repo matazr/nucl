@@ -26,7 +26,7 @@ jobs:
           -v $(pwd):/nuclei \
           projectdiscovery/nuclei:latest \
           -l /nuclei/targets.txt \
-          -t CVE-2024-50603.yaml \
+          -t /nuclei/CVE-2024-50603.yaml \
           -o /nuclei/results/results.txt
 
     # Step 8: Upload Results as Artifact
