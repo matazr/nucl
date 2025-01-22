@@ -25,7 +25,7 @@ jobs:
         docker run --rm \
           -v $(pwd):/nuclei \
           projectdiscovery/nuclei:latest \
-          -l targets.txt \
+          -l /nuclei/targets.txt \
           -t CVE-2024-50603.yaml \
           -o /nuclei/results/results.txt
 
