@@ -1,7 +1,11 @@
 name: Shodan and Nuclei Workflow with Go
 
 on:
+  push:  # Trigger on every push to the repository
+    branches:
+      - main 
   workflow_dispatch:  # Manual trigger for the workflow
+  
 
 jobs:
   shodan_nuclei_scan:
@@ -27,7 +31,8 @@ jobs:
           projectdiscovery/nuclei:latest \
           -l /nuclei/targets.txt \
           -t /nuclei/CVE-2024-50603.yaml \
-          -o /nuclei/results/results.txt
+          -o /nuclei/results/results.txt \
+          -debug
 
     # Step 8: Upload Results as Artifact
     - name: Upload Scan Results
